@@ -3,6 +3,8 @@ from openai import AsyncOpenAI
 from rich import print
 import os
 
+set_tracing_disabled(True)
+
 #! LLM Context 4 tareeekon se LLM k paas jaa skty hain
 #? 1. system prompt
 #? 2. user prompt
@@ -69,7 +71,16 @@ def get_user_info(ctx: RunContextWrapper[UserInfo]):
     """Fetch the user details"""
     return f"The name of user is {ctx.context.name} and age is {ctx.context.age}"
 
-agent.tools.append(get_user_info)
+
+agent = Agent(
+    name="Helpfull Assistant",
+    instructions=(
+        "You are a helpful assistant "
+        "You have tool to get the user details."
+    ),
+    tools=[get_user_info]
+)
+
 user=UserInfo(name="Muhammad Ali", age=30)
 print(
     Runner.run_sync(
